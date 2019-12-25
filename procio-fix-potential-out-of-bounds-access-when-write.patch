@@ -1,0 +1,47 @@
+From 3eb4b5375f7ffca0e21fac479dfa688cae936641 Mon Sep 17 00:00:00 2001
+From: Patrick Steinhardt <ps@pks.im>
+Date: Tue, 29 May 2018 13:20:00 +0200
+Subject: [PATCH 62/65] procio: fix potential out-of-bounds access when write
+ fails
+
+When writing to procfs via `proc_write` fails, we try to chunk the
+buffer into smaller pieces to work around that issue. When searching for
+the next location to split the buffer, though, we can underflow the
+buffer in case the current offset is smaller than `LINELEN`. Fix the
+issue by passing `cookie->offset` instead of `LINELEN` into `memrchr` in
+case `cookie->offset` is smaller than `LINELEN`.
+
+This bug can be triggered on musl-based systems, e.g. by executing
+
+    $ sysctl kernel.printk_ratelimit=1000000000000000
+
+As the value is out-of-range, `write` will return an error and set
+`errno` to `EINVAL`. As we're only trying to write a smallish buffer
+with a length smaller than `LINELEN` and as the buffer does not contain
+any newlines, the call
+
+    token = (char*)memrchr(cookie->buf+offset, '\n', LINELEN);
+
+will underflow the buffer and crash the program.
+
+Signed-off-by: Patrick Steinhardt <ps@pks.im>
+---
+ procio.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/procio.c b/procio.c
+index 2813cd5..f3258ff 100644
+--- a/procio.c
++++ b/procio.c
+@@ -251,7 +251,7 @@ ssize_t proc_write(void *c, const char *buf, size_t count)
+ 				if (cookie->offset > LINELEN)
+ 					token = (char*)memrchr(cookie->buf+offset, cookie->delim, LINELEN);
+ 				else
+-					token = (char*)memrchr(cookie->buf+offset, '\n', LINELEN);
++					token = (char*)memrchr(cookie->buf+offset, '\n', cookie->offset);
+ 				if (token)
+ 					*token = '\n';
+ 				else {
+-- 
+2.6.4.windows.1
+

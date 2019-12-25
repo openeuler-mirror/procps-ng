@@ -1,0 +1,40 @@
+From da82fe49b1476d227874905068adb69577e11d96 Mon Sep 17 00:00:00 2001
+From: Patrick Steinhardt <ps@pks.im>
+Date: Tue, 29 May 2018 13:29:03 +0200
+Subject: [PATCH 63/65] sysctl: do not report set key in case `close_stream`
+ fails
+
+As we're using buffered I/O when writing kernel parameters, write errors
+may get delayed until we close the `FILE` stream. As we are currently
+outputting the key that is to be set disregarding the return value of
+`close_stream`, we may end up in a situation where we report error and
+success:
+
+    $ sysctl kernel.printk_ratelimit=100000000000000
+    sysctl: setting key "kernel.printk_ratelimit": error code 22
+    kernel.printk_ratelimit = 100000000000000
+
+Fix the issue by only outputting the updated value in case
+`close_stream` does not report an error.
+
+Signed-off-by: Patrick Steinhardt <ps@pks.im>
+---
+ sysctl.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/sysctl.c b/sysctl.c
+index 2371ca9..2172759 100644
+--- a/sysctl.c
++++ b/sysctl.c
+@@ -465,7 +465,7 @@ static int WriteSetting(const char *setting)
+ 			rc = 0;
+ 		if (close_stream(fp) != 0)
+ 			xwarn(_("setting key \"%s\""), outname);
+-		if (rc == 0 && !Quiet) {
++		else if (rc == 0 && !Quiet) {
+ 			if (NameOnly) {
+ 				fprintf(stdout, "%s\n", outname);
+ 			} else {
+-- 
+2.6.4.windows.1
+

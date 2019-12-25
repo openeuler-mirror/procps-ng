@@ -1,0 +1,27 @@
+From b4f471848111948d6edd9132b3619869cf89971a Mon Sep 17 00:00:00 2001
+From: Qualys Security Advisory <qsa@qualys.com>
+Date: Thu, 1 Jan 1970 00:00:00 +0000
+Subject: [PATCH 15/65] vmstat: Replace memcmp() with strncmp().
+
+Otherwise this may read out-of-bounds (there is no guarantee that 5
+bytes are actually available at partition/optarg).
+---
+ vmstat.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/vmstat.c b/vmstat.c
+index 6eca2c4..c5f6d62 100644
+--- a/vmstat.c
++++ b/vmstat.c
+@@ -909,7 +909,7 @@ int main(int argc, char *argv[])
+ 		case 'p':
+ 			statMode |= PARTITIONSTAT;
+ 			partition = optarg;
+-			if (memcmp(partition, "/dev/", 5) == 0)
++			if (strncmp(partition, "/dev/", 5) == 0)
+ 				partition += 5;
+ 			break;
+ 		case 'S':
+-- 
+2.6.4.windows.1
+

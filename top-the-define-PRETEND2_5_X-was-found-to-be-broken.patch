@@ -1,0 +1,50 @@
+From 2b82cbfc2aa25d613414d9b164ae5773ca31045f Mon Sep 17 00:00:00 2001
+From: Jim Warner <james.warner@comcast.net>
+Date: Tue, 14 Aug 2018 00:00:00 -0500
+Subject: [PATCH 53/65] top: the '#define PRETEND2_5_X' was found to be broken
+
+Our newlib branch has already dropped support for such
+old kernels. However, the master branch still supports
+them. So this patch will correct a broken #define that
+is used to influence the top Summary Area information.
+
+Signed-off-by: Jim Warner <james.warner@comcast.net>
+---
+ top/top.c | 4 ++++
+ top/top.h | 4 ----
+ 2 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/top/top.c b/top/top.c
+index 46ffdc5..4146ddb 100644
+--- a/top/top.c
++++ b/top/top.c
+@@ -3615,7 +3615,11 @@ static void before (char *me) {
+    struct sigaction sa;
+    proc_t p;
+    int i;
++#ifndef PRETEND2_5_X
+    int linux_version_code = procps_linux_version();
++#else
++   int linux_version_code = LINUX_VERSION(2,5,43);
++#endif
+ 
+    atexit(close_stdout);
+ 
+diff --git a/top/top.h b/top/top.h
+index b6e970c..4a7c49a 100644
+--- a/top/top.h
++++ b/top/top.h
+@@ -92,10 +92,6 @@
+         /* For prompting & helping with top's utf-8 support, thanks to:
+               Göran Uddeborg <goeran@uddeborg.se> - September, 2017 */
+ 
+-#ifdef PRETEND2_5_X
+-#define linux_version_code LINUX_VERSION(2,5,43)
+-#endif
+-
+    // pretend as if #define _GNU_SOURCE
+ char *strcasestr(const char *haystack, const char *needle);
+ 
+-- 
+2.6.4.windows.1
+

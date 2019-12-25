@@ -1,39 +1,52 @@
-# procps-ng
+[![build status](https://gitlab.com/ci/projects/2142/status.png?ref=master)](https://gitlab.com/ci/projects/2142?ref=master)
+procps
+======
 
-#### 介绍
-{**以下是码云平台说明，您可以替换此简介**
-码云是 OSCHINA 推出的基于 Git 的代码托管平台（同时支持 SVN）。专为开发者提供稳定、高效、安全的云端软件开发协作平台
-无论是个人、团队、或是企业，都能够用码云实现代码托管、项目管理、协作开发。企业项目请看 [https://gitee.com/enterprises](https://gitee.com/enterprises)}
+procps is a set of command line and full-screen utilities that provide
+information out of the pseudo-filesystem most commonly located at /proc.
+This filesystem provides a simple interface to the kernel data structures.
+The programs of procps generally concentrate on the structures that describe
+the processess running on the system.
 
-#### 软件架构
-软件架构说明
+The following programs are found in procps:
+* *free* - Report the amount of free and used memory in the system
+* *kill* - Send a signal to a process based on PID
+* *pgrep* - List processes based on name or other attributes
+* *pkill* - Send a signal to a process based on name or other attributes
+* *pmap* - Report memory map of a process
+* *ps* - Report information of processes
+* *pwdx* - Report current directory of a process
+* *skill* - Obsolete version of pgrep/pkill
+* *slabtop* - Display kernel slab cache information in real time
+* *snice* - Renice a process
+* *sysctl* - Read or Write kernel parameters at run-time
+* *tload* - Graphical representation of system load average
+* *top* - Dynamic real-time view of running processes
+* *uptime* - Display how long the system has been running
+* *vmstat* - Report virtual memory statistics
+* *w* - Report logged in users and what they are doing
+* *watch* - Execute a program periodically, showing output fullscreen
 
+## Reporting Bugs
+There are a few ways of reporting bugs or feature requests:
 
-#### 安装教程
+1. Your distributions bug reporter. If you are using a distribution your first
+port of call is their bug tracker. This is because each distribution has their
+own patches and way of dealing with bugs. Also bug reporting often does not need
+any subscription to websites.
+2. GitLab Issues - To the left of this page is the issue tracker. You can report
+bugs here.
+3. Email list - We have an email list (see below) where you can report bugs.
+The problem with this method is bug reports often get lost and cannot be
+tracked. This is especially a big problem when its something that will take
+time to resolve.
 
-1.  xxxx
-2.  xxxx
-3.  xxxx
+If you need to report bugs, there is more details on the
+[Bug Reporting](https://gitlab.com/procps-ng/procps/blob/master/Documentation/bugs.md)
+page.
 
-#### 使用说明
-
-1.  xxxx
-2.  xxxx
-3.  xxxx
-
-#### 参与贡献
-
-1.  Fork 本仓库
-2.  新建 Feat_xxx 分支
-3.  提交代码
-4.  新建 Pull Request
-
-
-#### 码云特技
-
-1.  使用 Readme\_XXX.md 来支持不同的语言，例如 Readme\_en.md, Readme\_zh.md
-2.  码云官方博客 [blog.gitee.com](https://blog.gitee.com)
-3.  你可以 [https://gitee.com/explore](https://gitee.com/explore) 这个地址来了解码云上的优秀开源项目
-4.  [GVP](https://gitee.com/gvp) 全称是码云最有价值开源项目，是码云综合评定出的优秀开源项目
-5.  码云官方提供的使用手册 [https://gitee.com/help](https://gitee.com/help)
-6.  码云封面人物是一档用来展示码云会员风采的栏目 [https://gitee.com/gitee-stars/](https://gitee.com/gitee-stars/)
+## Email List
+The email list for the developers and users of procps is found at
+http://www.freelists.org/archive/procps/
+This email list discusses the development of procps and is used by distributions
+to also forward or discuss bugs.
