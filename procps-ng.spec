@@ -1,6 +1,6 @@
 Name: 		procps-ng
-Version: 	3.3.15
-Release:    10
+Version: 	3.3.16
+Release:    11
 Summary: 	Utilities that provide system information.
 License: 	GPL+ and GPLv2 and GPLv2+ and GPLv3+ and LGPLv2+
 URL: 		https://sourceforge.net/projects/procps-ng/
@@ -11,23 +11,6 @@ Source2: 	README.top
 
 Patch9000: 	feature-add-options-M-and-N-for-top.patch
 Patch9001: 	bugfix-top-exit-with-error-when-pid-overflow.patch
-Patch6002: 	top-fix-iokey-flaw-preventing-proper-translations.patch
-Patch6003: 	Possible-segfault-in-file2strvec-introduced-by-lates.patch
-Patch6004:	top-don-t-mess-with-groff-line-length-in-man-documen.patch
-Patch6005:	top-add-another-field-sanity-check-in-config_file.patch
-Patch6006:	top-prevent-buffer-overruns-in-inspection_utility.patch
-Patch6007:	docs-Tidying-of-ps-kill-and-skill-manpages.patch
-Patch6008:	library-avoid-problems-involving-supgid-mishandling.patch
-Patch6009:	w-Prevent-out-of-bounds-reads-in-print_display_or_in.patch
-Patch6010:	w-Clamp-maxcmd-to-the-MIN-MAX_CMD_WIDTH-range.patch
-Patch6011:	vmstat-getopt-returns-1-when-done-not-EOF.patch
-Patch6012:	vmstat-Replace-memcmp-with-strncmp.patch
-Patch6013:	vmstat-Check-return-values-of-localtime-and-strftime.patch
-Patch6014:	vmstat-Prevent-out-of-bounds-writes-in-new_header-an.patch
-Patch6015:	top-the-define-PRETEND2_5_X-was-found-to-be-broken.patch
-Patch6016:	procio-use-the-user-supplied-delimiter-to-split-larg.patch
-Patch6017:	procio-fix-potential-out-of-bounds-access-when-write.patch
-Patch6018:	sysctl-do-not-report-set-key-in-case-close_stream-fa.patch
 
 BuildRequires: 	ncurses-devel libtool autoconf automake gcc gettext-devel systemd-devel
 
@@ -107,9 +90,16 @@ ln -s %{_bindir}/pidof %{buildroot}%{_sbindir}/pidof
 %files help
 %doc AUTHORS Documentation/bugs.md Documentation/FAQ NEWS README.md top/README.top Documentation/TODO
 %{_mandir}/man*
-
+%{_mandir}/translated
 
 %changelog
+* Tue Jan 7 2020 MarsChan <chenmingmin@huawei.com> - 3.3.16-11
+- Type:upgrade
+- ID:NA
+- SUG:NA
+- DESC: upgrade to version 3.3.16 and delete the patch between
+        3.3.15 and 3.3.16.
+
 * Mon Dec 23 2019 wangshuo <wangshuo47@huawei.com> - 3.3.15-10
 - Type:bugfix
 - ID:NA
