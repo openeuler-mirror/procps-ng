@@ -1,6 +1,6 @@
 Name: 		procps-ng
 Version: 	3.3.16
-Release:    11
+Release:    12
 Summary: 	Utilities that provide system information.
 License: 	GPL+ and GPLv2 and GPLv2+ and GPLv3+ and LGPLv2+
 URL: 		https://sourceforge.net/projects/procps-ng/
@@ -11,6 +11,7 @@ Source2: 	README.top
 
 Patch9000: 	feature-add-options-M-and-N-for-top.patch
 Patch9001: 	bugfix-top-exit-with-error-when-pid-overflow.patch
+Patch9002: 	backport-pgrep-check-sanity-of-SC_ARG_MAX.patch
 
 BuildRequires: 	ncurses-devel libtool autoconf automake gcc gettext-devel systemd-devel
 
@@ -93,6 +94,14 @@ ln -s %{_bindir}/pidof %{buildroot}%{_sbindir}/pidof
 %{_mandir}/translated
 
 %changelog
+* Wed Sep 23 2020 MarsChan <chenmingmin@huawei.com> - 3.3.16-12
+- Type:bugfix
+- ID:NA
+- SUG:restart
+- DESC:A kernel change means we cannot trust what sysconf(SC_ARG_MAX)
+       returns. We clamp it so its more than 4096 and less than 128*1024
+       which is what findutils does.
+
 * Tue Jan 7 2020 MarsChan <chenmingmin@huawei.com> - 3.3.16-11
 - Type:upgrade
 - ID:NA
