@@ -1,0 +1,42 @@
+From 6e1715d9ebcffd7a673cbacbca4416c42d103c7b Mon Sep 17 00:00:00 2001
+From: Jim Warner <james.warner@comcast.net>
+Date: Sun, 13 Sep 2020 00:00:00 -0500
+Subject: [PATCH] top: fix additional SEGVs if no tasks were displayable
+
+This patch is an outgrowth of that commit shown below.
+
+Many additional potential segmentation faults might be
+encountered if interactive commands are opened up to a
+user when a '-p' switch has a single non-existent pid.
+
+[ always the 'k', 'L', 'r', 'Y' keys & maybe 'v' too ]
+
+So, this patch will restrict such a loser (oops, user)
+to a reduced subset of normal commands until he/she/it
+quits then restarts top with something to be displayed
+or issues the '=' command overriding that '-p' switch.
+
+Reference(s):
+commit f57a0301e3adfa5fd456404a200182c7f21da03a
+
+Signed-off-by: Jim Warner <james.warner@comcast.net>
+---
+ top/top.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/top/top.c b/top/top.c
+index 1147938..2afe648 100644
+--- a/top/top.c
++++ b/top/top.c
+@@ -5897,6 +5897,8 @@ static void do_key (int ch) {
+          write_rcfile();
+          goto all_done;
+       default:               // and now, the real work...
++         // and just in case 'Monpids' is active but matched no processes ...
++         if (!Frame_maxtask && ch != '=') goto all_done;
+          for (i = 0; i < MAXTBL(key_tab); ++i)
+             if (strchr(key_tab[i].keys, ch)) {
+                key_tab[i].func(ch);
+-- 
+2.22.0.windows.1
+

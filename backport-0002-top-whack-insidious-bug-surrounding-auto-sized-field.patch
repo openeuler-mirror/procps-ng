@@ -1,0 +1,85 @@
+From 00028aa23732598aecad6f1c146f3f9751372958 Mon Sep 17 00:00:00 2001
+From: Jim Warner <james.warner@comcast.net>
+Date: Wed, 1 Jan 2020 00:00:00 -0500
+Subject: [PATCH] top: whack insidious bug surrounding auto-sized fields
+
+This commit duplicates a change to that newlib branch.
+However, it should be noted that such a change was not
+really necessary under this master branch since proc_t
+data remains valid much longer. It is being duplicated
+here as documentation only. Below is the original msg.
+
+------------------------------------------------------
+This patch will eliminate a bug which is unique to our
+newlib branch. It's extremely rare and only happens if
+a search ('L'/'&') is initiated during the period when
+fields are currently being auto-sized (AUTOX_MODE on).
+
+This bug surfaces as either all zero results for tasks
+displayed or a segmentation fault, depending upon what
+fields were activated. It is caused by the timing of a
+call to the <pids> 'reset' function. When called after
+a task refresh, but before do_key(), this bug appears.
+
+So this patch just ensures that 'reset' will be called
+after do_key() & before the tasks have been refreshed.
+------------------------------------------------------
+
+Signed-off-by: Jim Warner <james.warner@comcast.net>
+---
+ top/top.c | 11 ++++++-----
+ top/top.h |  2 +-
+ 2 files changed, 7 insertions(+), 6 deletions(-)
+
+diff --git a/top/top.c b/top/top.c
+index 1aa5a8c..09b8ef9 100644
+--- a/top/top.c
++++ b/top/top.c
+@@ -2320,7 +2320,8 @@ static inline void widths_resize (void) {
+          Autox_found = 1;
+       }
+    }
+-   if (Autox_found) calibrate_fields();
++   // trigger a call to calibrate_fields (via zap_fieldstab)
++   if (Autox_found) Frames_signal = BREAK_autox;
+ } // end: widths_resize
+ 
+ 
+@@ -6407,6 +6408,10 @@ static void frame_make (void) {
+    WIN_t *w = Curwin;             // avoid gcc bloat with a local copy
+    int i, scrlins;
+ 
++   // check auto-sized width increases from the last iteration...
++   if (AUTOX_MODE && Autox_found)
++      widths_resize();
++
+    // deal with potential signal(s) since the last time around...
+    if (Frames_signal)
+       zap_fieldstab();
+@@ -6459,10 +6464,6 @@ static void frame_make (void) {
+    /* we'll deem any terminal not supporting tgoto as dumb and disable
+       the normal non-interactive output optimization... */
+    if (!Cap_can_goto) PSU_CLREOS(0);
+-
+-   /* lastly, check auto-sized width needs for the next iteration */
+-   if (AUTOX_MODE && Autox_found)
+-      widths_resize();
+ } // end: frame_make
+ 
+ 
+diff --git a/top/top.h b/top/top.h
+index 2a578b8..432a4f4 100644
+--- a/top/top.h
++++ b/top/top.h
+@@ -224,7 +224,7 @@ enum scale_enum {
+ 
+         /* Used to manipulate (and document) the Frames_signal states */
+ enum resize_states {
+-   BREAK_off = 0, BREAK_kbd, BREAK_sig
++   BREAK_off = 0, BREAK_kbd, BREAK_sig, BREAK_autox
+ };
+ 
+         /* This typedef just ensures consistent 'process flags' handling */
+-- 
+2.22.0.windows.1
+
