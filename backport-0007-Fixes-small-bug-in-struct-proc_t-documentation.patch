@@ -1,0 +1,32 @@
+From b52a26740445904c01233166271817743f2e4b40 Mon Sep 17 00:00:00 2001
+From: Dylan Swiggett <swiggett@google.com>
+Date: Tue, 29 Nov 2016 22:34:37 +0000
+Subject: [PATCH] Fixes small bug in struct proc_t documentation.
+
+From http://man7.org/linux/man-pages/man5/proc.5.html:
+
+(22) starttime  %llu
+                        The time the process started after system boot.  In
+                        kernels before Linux 2.6, this value was expressed
+                        in jiffies.  Since Linux 2.6, the value is expressed
+                        in clock ticks (divide by sysconf(_SC_CLK_TCK)).
+---
+ proc/readproc.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/proc/readproc.h b/proc/readproc.h
+index a3fdb51..7905ea9 100644
+--- a/proc/readproc.h
++++ b/proc/readproc.h
+@@ -74,7 +74,7 @@ typedef struct proc_t {
+ // and so on...
+ 	cutime,		// stat            cumulative utime of process and reaped children
+ 	cstime,		// stat            cumulative stime of process and reaped children
+-	start_time;	// stat            start time of process -- seconds since 1-1-70
++	start_time;	// stat            start time of process -- seconds since system boot
+ #ifdef SIGNAL_STRING
+     char
+ 	// Linux 2.1.7x and up have 64 signals. Allow 64, plus '\0' and padding.
+-- 
+2.22.0.windows.1
+
