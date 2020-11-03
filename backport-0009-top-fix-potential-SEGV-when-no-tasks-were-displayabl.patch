@@ -1,0 +1,40 @@
+From f57a0301e3adfa5fd456404a200182c7f21da03a Mon Sep 17 00:00:00 2001
+From: Jim Warner <james.warner@comcast.net>
+Date: Wed, 9 Sep 2020 00:00:00 -0500
+Subject: [PATCH] top: fix potential SEGV when no tasks were displayable
+
+This patch fixes a nearly decade old bug discovered by
+Frederik Deweerdt. His merge request shown below would
+be an adequate solution except for iterative overhead.
+
+This alternate patch will represent substantially less
+overhead for an admittedly extremely rare possibility.
+
+Reference(s):
+https://gitlab.com/procps-ng/procps/-/merge_requests/114
+
+And-thanks-to: Frederik Deweerdt <fdeweerdt@fastly.com>
+Signed-off-by: Jim Warner <james.warner@comcast.net>
+
+This patch has been modified to fit euler os
+Signed-off-by: chenmingmin <chenmingmin@huawei.com>
+---
+ top/top.c | 2 ++
+ 1 files changed, 2 insertions(+)
+
+diff --git a/top/top.c b/top/top.c
+index e06a61f..1147938 100644
+--- a/top/top.c
++++ b/top/top.c
+@@ -6486,6 +6486,8 @@ static int window_show (WIN_t *q, int wmax) {
+ 
+    // Display Column Headings -- and distract 'em while we sort (maybe)
+    PUFF("\n%s%s%s", q->capclr_hdr, q->columnhdr, Caps_endline);
++   // and just in case 'Monpids' is active but matched no processes ...
++   if (!Frame_maxtask) return 1;                    // 1 for the column header
+ 
+    if (CHKw(q, Show_FOREST))
+       forest_create(q);
+-- 
+2.22.0.windows.1
+
