@@ -1,0 +1,48 @@
+From 7db65421d0a964f898312ce29ae044019e40958a Mon Sep 17 00:00:00 2001
+From: Jim Warner <james.warner@comcast.net>
+Date: Sat, 4 Jan 2020 00:00:00 -0600
+Subject: [PATCH] ps: for abnormal end allow core dumps (fix qualys bug)
+
+A Qualys audit patch, represented in the commit below,
+added the _exit() call to our abnormal signal handler.
+Unfortunately, that disabled the associated core dump.
+
+This patch restores expected behavior of those signals
+whose default produces a core dump file + termination.
+
+Reference(s):
+commit 2e4a59422104ed7fa5502874f9076b8118edd6a8
+
+Signed-off-by: Jim Warner <james.warner@comcast.net>
+---
+ ps/display.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/ps/display.c b/ps/display.c
+index 28e1a6e..95a55c3 100644
+--- a/ps/display.c
++++ b/ps/display.c
+@@ -48,6 +48,10 @@ char *myname;
+ 
+ /* just reports a crash */
+ static void signal_handler(int signo){
++  sigset_t ss;
++
++  sigfillset(&ss);
++  sigprocmask(SIG_BLOCK, &ss, NULL);
+   if(signo==SIGPIPE) _exit(0);  /* "ps | head" will cause this */
+   /* fprintf() is not reentrant, but we _exit() anyway */
+   fprintf(stderr,
+@@ -65,6 +69,9 @@ static void signal_handler(int signo){
+     default:
+       error_at_line(0, 0, __FILE__, __LINE__, "%s", _("please report this bug"));
+       signal(signo, SIG_DFL);  /* allow core file creation */
++      sigemptyset(&ss);
++      sigaddset(&ss, signo);
++      sigprocmask(SIG_UNBLOCK, &ss, NULL);
+       kill(getpid(), signo);
+       _exit(EXIT_FAILURE);
+   }
+-- 
+2.22.0.windows.1
+

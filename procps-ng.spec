@@ -1,6 +1,6 @@
 Name: 		procps-ng
 Version: 	3.3.16
-Release:    12
+Release:	13
 Summary: 	Utilities that provide system information.
 License: 	GPL+ and GPLv2 and GPLv2+ and GPLv3+ and LGPLv2+
 URL: 		https://sourceforge.net/projects/procps-ng/
@@ -9,9 +9,19 @@ Source0: 	http://downloads.sourceforge.net/%{name}/%{name}-%{version}.tar.xz
 Source1: 	README.md
 Source2: 	README.top
 
+Patch0000: backport-0001-pgrep-check-sanity-of-SC_ARG_MAX.patch
+Patch0001: backport-0002-top-whack-insidious-bug-surrounding-auto-sized-field.patch
+Patch0002: backport-0003-top-at-abnormal-end-allow-core-dumps-fix-qualys-bug.patch
+Patch0003: backport-0004-ps-for-abnormal-end-allow-core-dumps-fix-qualys-bug.patch
+Patch0004: backport-0005-top-restore-one-line-of-code-to-sig_endpgm-function.patch
+Patch0005: backport-0006-top-restore-configuration-file-backward-compatibilit.patch
+Patch0006: backport-0007-Fixes-small-bug-in-struct-proc_t-documentation.patch
+Patch0007: backport-0008-misc-eliminate-a-couple-of-miscellaneous-gcc-warning.patch
+Patch0008: backport-0009-top-fix-potential-SEGV-when-no-tasks-were-displayabl.patch
+Patch0009: backport-0010-top-fix-additional-SEGVs-if-no-tasks-were-displayabl.patch
+
 Patch9000: 	feature-add-options-M-and-N-for-top.patch
 Patch9001: 	bugfix-top-exit-with-error-when-pid-overflow.patch
-Patch9002: 	backport-pgrep-check-sanity-of-SC_ARG_MAX.patch
 
 BuildRequires: 	ncurses-devel libtool autoconf automake gcc gettext-devel systemd-devel
 
@@ -94,6 +104,9 @@ ln -s %{_bindir}/pidof %{buildroot}%{_sbindir}/pidof
 %{_mandir}/translated
 
 %changelog
+* Thu Nov 03 2020 xinghe <xinghe1@huawei.com> - 3.3.16-13
+- sync patchs
+
 * Wed Sep 23 2020 MarsChan <chenmingmin@huawei.com> - 3.3.16-12
 - Type:bugfix
 - ID:NA
