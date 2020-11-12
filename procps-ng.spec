@@ -1,6 +1,6 @@
 Name: 		procps-ng
 Version: 	3.3.16
-Release:	13
+Release:	14
 Summary: 	Utilities that provide system information.
 License: 	GPL+ and GPLv2 and GPLv2+ and GPLv3+ and LGPLv2+
 URL: 		https://sourceforge.net/projects/procps-ng/
@@ -23,6 +23,7 @@ Patch0009: backport-0010-top-fix-additional-SEGVs-if-no-tasks-were-displayabl.pa
 Patch9000: 	feature-add-options-M-and-N-for-top.patch
 Patch9001: 	bugfix-top-exit-with-error-when-pid-overflow.patch
 
+Recommends:	%{name}-help = %{version}-%{release}
 BuildRequires: 	ncurses-devel libtool autoconf automake gcc gettext-devel systemd-devel
 
 Provides: 	procps = %{version}-%{release}
@@ -104,6 +105,9 @@ ln -s %{_bindir}/pidof %{buildroot}%{_sbindir}/pidof
 %{_mandir}/translated
 
 %changelog
+* Thu Nov 12 2020 xinghe <xinghe1@huawei.com> - 3.3.16-14
+- add help for Recommends
+
 * Thu Nov 03 2020 xinghe <xinghe1@huawei.com> - 3.3.16-13
 - sync patchs
 
