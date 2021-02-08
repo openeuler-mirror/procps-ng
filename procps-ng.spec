@@ -1,6 +1,6 @@
 Name: 		procps-ng
 Version: 	3.3.16
-Release:	15
+Release:	16
 Summary: 	Utilities that provide system information.
 License: 	GPL+ and GPLv2 and GPLv2+ and GPLv3+ and LGPLv2+
 URL: 		https://sourceforge.net/projects/procps-ng/
@@ -104,6 +104,9 @@ ln -s %{_bindir}/pidof %{buildroot}%{_sbindir}/pidof
 %{_mandir}/translated
 
 %changelog
+* Mon Feb 08 2020 xinghe <xinghe1@huawei.com> - 3.3.16-16
+- rebuild package
+
 * Mon Feb 08 2020 xinghe <xinghe1@huawei.com> - 3.3.16-15
 - rebuild package
 
