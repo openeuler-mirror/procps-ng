@@ -1,0 +1,25 @@
+From 79097e55e4b08ec8c1de8332e32cf03c4be1d4ec Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Rapha=C3=ABl=20Jakse?= <raphael.gitlab@jakse.fr>
+Date: Fri, 7 Sep 2018 12:57:03 +0000
+Subject: [PATCH] kill: Fix argument handling for negative PIDs
+
+---
+ skill.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/skill.c b/skill.c
+index 5a79a41..38ebdc5 100644
+--- a/skill.c
++++ b/skill.c
+@@ -507,7 +507,7 @@ static void __attribute__ ((__noreturn__))
+ 			} else {
+ 			    /* Special case for signal digit negative
+ 			     * PIDs */
+-			    pid = atoi(argv[optind]);
++			    pid = atoi(argv[optind-1]);
+ 			    if (kill((pid_t)pid, signo) != 0)
+ 				exitvalue = EXIT_FAILURE;
+ 			    exit(exitvalue);
+-- 
+2.27.0
+

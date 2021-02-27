@@ -1,0 +1,37 @@
+From 31343570e17cb13605c2c5a5c8b9a21d443bbb2a Mon Sep 17 00:00:00 2001
+From: Stephen Brennan <stephen.s.brennan@oracle.com>
+Date: Thu, 19 Nov 2020 16:03:58 -0800
+Subject: [PATCH] Set TZ to avoid repeated stat("/etc/localtime")
+
+With glibc, each time the strftime() function is used (twice per process
+in a typical ps -fe run), a stat("/etc/localtime") system call is used
+to determine the timezone. Not only does this add extra system call
+overhead, but when multiple ps processes are trying to access this
+file (or multiple glibc programs using strftime) in parallel, this can
+trigger significant lock contention within the OS kernel.
+
+Since ps is not intended to run for long periods of time as a
+daemon (during which the system timezone could be altered and PS might
+reasonably be expected to adapt its output), there is no benefit to
+repeatedly doing this stat(). To stop this behavior, explicitly set the
+TZ variable to its default value (:/etc/localtime) whenever it is unset.
+glibc will then cache the stat() result.
+---
+ ps/display.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/ps/display.c b/ps/display.c
+index 95a55c3..06094d3 100644
+--- a/ps/display.c
++++ b/ps/display.c
+@@ -633,6 +633,7 @@ int main(int argc, char *argv[]){
+   setlocale (LC_ALL, "");
+   bindtextdomain(PACKAGE, LOCALEDIR);
+   textdomain(PACKAGE);
++  setenv("TZ", ":/etc/localtime", 0);
+ 
+ #ifdef DEBUG
+   init_stack_trace(argv[0]);
+-- 
+2.27.0
+
