@@ -1,6 +1,6 @@
 Name: 		procps-ng
 Version: 	3.3.16
-Release:	14
+Release:	17
 Summary: 	Utilities that provide system information.
 License: 	GPL+ and GPLv2 and GPLv2+ and GPLv3+ and LGPLv2+
 URL: 		https://sourceforge.net/projects/procps-ng/
@@ -20,12 +20,13 @@ Patch0007: backport-0008-misc-eliminate-a-couple-of-miscellaneous-gcc-warning.pa
 Patch0008: backport-0009-top-fix-potential-SEGV-when-no-tasks-were-displayabl.patch
 Patch0009: backport-0010-top-fix-additional-SEGVs-if-no-tasks-were-displayabl.patch
 Patch0010: backport-0011-pgrep-Remove-memory-leak.patch
-Patch0011: backport-0012-Set-TZ-to-avoid-repeated-stat-etc-localtime.patch
-Patch0012: backport-0013-kill-Fix-argument-handling-for-negative-PIDs.patch
+Patch0011: backport-0012-Set-TZ-to-avoid-repeated-stat-etc-localtime.patch 
+Patch0012: backport-0013-kill-Fix-argument-handling-for-negative-PIDs.patch 
 
 Patch9000: 	feature-add-options-M-and-N-for-top.patch
 Patch9001: 	bugfix-top-exit-with-error-when-pid-overflow.patch
 
+Recommends:	%{name}-help = %{version}-%{release}
 BuildRequires: 	ncurses-devel libtool autoconf automake gcc gettext-devel systemd-devel
 
 Provides: 	procps = %{version}-%{release}
@@ -107,8 +108,17 @@ ln -s %{_bindir}/pidof %{buildroot}%{_sbindir}/pidof
 %{_mandir}/translated
 
 %changelog
-* Sat Feb 27 2021 hewenliang <hewenliang4@huawei.com> - 3.3.16-14
-- sync patches
+* Sat Feb 27 2021 hewenliang <314264452@qq.com> - 3.3.16-17
+- Sync patches from upstream
+
+* Mon Feb 08 2021 xinghe <xinghe1@huawei.com> - 3.3.16-16
+- rebuild package
+
+* Sun Feb 7 2021 xinghe <xinghe1@huawei.com> - 3.3.16-15
+- rebuild package
+
+* Thu Nov 12 2020 xinghe <xinghe1@huawei.com> - 3.3.16-14
+- add help for Recommends
 
 * Thu Nov 03 2020 xinghe <xinghe1@huawei.com> - 3.3.16-13
 - sync patchs
