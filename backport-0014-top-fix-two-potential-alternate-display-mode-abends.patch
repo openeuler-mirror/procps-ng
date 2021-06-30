@@ -1,0 +1,79 @@
+From 84e85611c36d31a478e1b62e5668671d9389265d Mon Sep 17 00:00:00 2001
+From: Jim Warner <james.warner@comcast.net>
+Date: Mon, 31 May 2021 00:00:00 -0500
+Subject: [PATCH] top: fix two potential 'alternate display mode' abends
+
+This commit will address potential abends upon leaving
+the windows help or color mapping screens and invoking
+alternate display mode ('A').  It only happens if that
+current window was changed with multiple 'a'/'w' keys.
+
+So now, rather than leaving a trail of negative values
+in the 'begtask' field, compliments of that win_select
+function, we'll remove the mkVIZrow1 macro. Henceforth
+it will be issued just once per user interaction. Thus
+a promise of 'Curwin' only being impacted is restored.
+
+[ my thanks to Vladimir Chren for reporting this bug ]
+
+Reference(s):
+https://gitlab.com/procps-ng/procps/-/issues/210
+https://gitlab.com/procps-ng/procps/-/merge_requests/135
+
+Discovered by:Vladimir Chren <vladimir.chren@gmail.com>
+Signed-off-by: Jim Warner <james.warner@comcast.net>
+---
+ top/top.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
+
+diff --git a/top/top.c b/top/top.c
+index c1f30fb..dd6e3d5 100644
+--- a/top/top.c
++++ b/top/top.c
+@@ -4475,7 +4475,6 @@ static WIN_t *win_select (int ch) {
+          break;
+    }
+    Curwin = w;
+-   mkVIZrow1(Curwin);
+    return Curwin;
+ } // end: win_select
+ 
+@@ -5148,6 +5147,7 @@ static void keys_global (int ch) {
+       case '?':
+       case 'h':
+          help_view();
++         mkVIZrow1(Curwin);
+          break;
+       case 'B':
+          TOGw(w, View_NOBOLD);
+@@ -5175,6 +5175,7 @@ static void keys_global (int ch) {
+          break;
+       case 'g':
+          win_select(0);
++         mkVIZrow1(Curwin);
+          break;
+       case 'H':
+          Thread_mode = !Thread_mode;
+@@ -5254,6 +5255,7 @@ static void keys_global (int ch) {
+          break;
+       case 'Z':
+          wins_colors();
++         mkVIZrow1(Curwin);
+          break;
+       case '0':
+          Rc.zero_suppress = !Rc.zero_suppress;
+@@ -5573,7 +5575,10 @@ static void keys_window (int ch) {
+          break;
+       case 'a':
+       case 'w':
+-         if (ALTCHKw) win_select(ch);
++         if (ALTCHKw) {
++            win_select(ch);
++            mkVIZrow1(Curwin);
++         }
+          break;
+       case 'G':
+          if (ALTCHKw) {
+-- 
+1.8.3.1
+
