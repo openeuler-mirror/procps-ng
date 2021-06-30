@@ -1,6 +1,6 @@
 Name: 		procps-ng
 Version: 	3.3.16
-Release:	15
+Release:	16
 Summary: 	Utilities that provide system information.
 License: 	GPL+ and GPLv2 and GPLv2+ and GPLv3+ and LGPLv2+
 URL: 		https://sourceforge.net/projects/procps-ng/
@@ -22,6 +22,8 @@ Patch0009: backport-0010-top-fix-additional-SEGVs-if-no-tasks-were-displayabl.pa
 Patch0010: backport-0011-pgrep-Remove-memory-leak.patch
 Patch0011: backport-0012-Set-TZ-to-avoid-repeated-stat-etc-localtime.patch
 Patch0012: backport-0013-kill-Fix-argument-handling-for-negative-PIDs.patch
+Patch0013: backport-0014-top-fix-two-potential-alternate-display-mode-abends.patch
+Patch0014: backport-0015-top-In-the-bye_bye-function-replace-fputs-with-the-w.patch
 
 Patch9000: 	feature-add-options-M-and-N-for-top.patch
 Patch9001: 	bugfix-top-exit-with-error-when-pid-overflow.patch
@@ -107,6 +109,9 @@ ln -s %{_bindir}/pidof %{buildroot}%{_sbindir}/pidof
 %{_mandir}/translated
 
 %changelog
+* Wed Jun 30 2021 hewenliang <hewenliang4@huawei.com> - 3.3.16-16
+- sync patches
+
 * Sat Feb 27 2021 hewenliang <hewenliang4@huawei.com> - 3.3.16-15
 - sync patches
 
