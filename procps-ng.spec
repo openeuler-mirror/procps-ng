@@ -1,6 +1,6 @@
 Name: 		procps-ng
-Version: 	3.3.16
-Release:	16
+Version: 	3.3.17
+Release:	1
 Summary: 	Utilities that provide system information.
 License: 	GPL+ and GPLv2 and GPLv2+ and GPLv3+ and LGPLv2+
 URL: 		https://sourceforge.net/projects/procps-ng/
@@ -9,24 +9,10 @@ Source0: 	http://downloads.sourceforge.net/%{name}/%{name}-%{version}.tar.xz
 Source1: 	README.md
 Source2: 	README.top
 
-Patch0000: backport-0001-pgrep-check-sanity-of-SC_ARG_MAX.patch
-Patch0001: backport-0002-top-whack-insidious-bug-surrounding-auto-sized-field.patch
-Patch0002: backport-0003-top-at-abnormal-end-allow-core-dumps-fix-qualys-bug.patch
-Patch0003: backport-0004-ps-for-abnormal-end-allow-core-dumps-fix-qualys-bug.patch
-Patch0004: backport-0005-top-restore-one-line-of-code-to-sig_endpgm-function.patch
-Patch0005: backport-0006-top-restore-configuration-file-backward-compatibilit.patch
-Patch0006: backport-0007-Fixes-small-bug-in-struct-proc_t-documentation.patch
-Patch0007: backport-0008-misc-eliminate-a-couple-of-miscellaneous-gcc-warning.patch
-Patch0008: backport-0009-top-fix-potential-SEGV-when-no-tasks-were-displayabl.patch
-Patch0009: backport-0010-top-fix-additional-SEGVs-if-no-tasks-were-displayabl.patch
-Patch0010: backport-0011-pgrep-Remove-memory-leak.patch
-Patch0011: backport-0012-Set-TZ-to-avoid-repeated-stat-etc-localtime.patch
-Patch0012: backport-0013-kill-Fix-argument-handling-for-negative-PIDs.patch
-Patch0013: backport-0014-top-fix-two-potential-alternate-display-mode-abends.patch
-Patch0014: backport-0015-top-In-the-bye_bye-function-replace-fputs-with-the-w.patch
-
-Patch9000: 	feature-add-options-M-and-N-for-top.patch
-Patch9001: 	bugfix-top-exit-with-error-when-pid-overflow.patch
+Patch1: 	0001-top-fix-two-potential-alternate-display-mode-abends.patch
+Patch2: 	0002-top-In-the-bye_bye-function-replace-fputs-with-the-w.patch
+Patch3: 	0003-add-options-M-and-N-for-top.patch
+Patch4: 	0004-top-exit-with-error-when-pid-overflow.patch
 
 BuildRequires: 	ncurses-devel libtool autoconf automake gcc gettext-devel systemd-devel
 
@@ -58,7 +44,7 @@ The package is used for the Internationalization of %{name}
 %package_help
 
 %prep
-%autosetup -n %{name}-%{version} -p1
+%autosetup -n procps-%{version} -p1
 
 cp -p %{SOURCE1} .
 cp -p %{SOURCE2} top/
@@ -73,8 +59,6 @@ make CFLAGS="%{optflags}"
 
 %install
 %make_install
-
-find man-po/ -type d -maxdepth 1 -mindepth 1 | while read dirname; do cp -a $dirname %{buildroot}%{_mandir}/ ; done
 
 %find_lang %{name} --all-name --with-man
 
@@ -106,9 +90,11 @@ ln -s %{_bindir}/pidof %{buildroot}%{_sbindir}/pidof
 %files help
 %doc AUTHORS Documentation/bugs.md Documentation/FAQ NEWS README.md top/README.top Documentation/TODO
 %{_mandir}/man*
-%{_mandir}/translated
 
 %changelog
+* Thu Dec 2 2021 zhouwenpei <zhouwenpei1@huawei.com> - 3.3.17-1
+- update to 3.3.17
+
 * Wed Jun 30 2021 hewenliang <hewenliang4@huawei.com> - 3.3.16-16
 - sync patches
 
