@@ -10,10 +10,10 @@ Signed-off-by: xuchunmei <xuchunmei@huawei.com>
  2 files changed, 18 insertions(+), 1 deletion(-)
 
 diff --git a/top/top.c b/top/top.c
-index d890140..9bfc7f0 100644
+index b53e532..20cf7a1 100644
 --- a/top/top.c
 +++ b/top/top.c
-@@ -4139,6 +4139,23 @@ static void parse_args (char **args) {
+@@ -4337,6 +4337,23 @@ static void parse_args (char **args) {
                 args += ai;
                 if (pn) cp = pn + ci;
              }  continue;
@@ -38,18 +38,18 @@ index d890140..9bfc7f0 100644
                 error_exit(fmtmk(N_fmt(UNKNOWN_opts_fmt)
                    , *cp, Myname, N_txt(USAGE_abbrev_txt)));
 diff --git a/top/top_nls.c b/top/top_nls.c
-index 0af77ce..79a18e1 100644
+index ab3029e..97c3468 100644
 --- a/top/top_nls.c
 +++ b/top/top_nls.c
 @@ -350,7 +350,7 @@ static void build_norm_nlstab (void) {
     Norm_nlstab[OFF_one_word_txt] = _("Off");
  /* Translation Hint: Only the following words should be translated
     .                 secs (seconds), max (maximum), user, field, cols (columns)*/
--   Norm_nlstab[USAGE_abbrev_txt] = _(" -hv | -bcEHiOSs1 -d secs -n max -u|U user -p pid(s) -o field -w [cols]");
-+   Norm_nlstab[USAGE_abbrev_txt] = _(" -hv | -bcEHiOSs1 -d secs -n max -u|U user -p pid(s) -o field -w [cols] -M -N num");
+-   Norm_nlstab[USAGE_abbrev_txt] = _(" -hv | -bcEeHiOSs1 -d secs -n max -u|U user -p pid(s) -o field -w [cols]");
++   Norm_nlstab[USAGE_abbrev_txt] = _(" -hv | -bcEeHiOSs1 -d secs -n max -u|U user -p pid(s) -o field -w [cols] -M -N num");
     Norm_nlstab[FAIL_statget_txt] = _("failed /proc/stat read");
     Norm_nlstab[FOREST_modes_fmt] = _("Forest mode %s");
     Norm_nlstab[FAIL_tty_get_txt] = _("failed tty get");
 -- 
-1.8.3.1
+2.27.0
 
