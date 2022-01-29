@@ -1,0 +1,39 @@
+From 27e60e86e9f5b85520da001422176700fc9d824a Mon Sep 17 00:00:00 2001
+From: Jim Warner <james.warner@comcast.net>
+Date: Mon, 21 Jun 2021 00:00:00 -0500
+Subject: [PATCH] top: fix a fix for the 'bye_bye' function (merge #127)
+
+In the merge request shown below, 1 too many bytes are
+written to stdout thus including the terminating null.
+As the cure, this commit just reduces the length by 1.
+
+[ along the way, we will remove some unneeded braces ]
+[ plus add some additional comments with attribution ]
+
+Reference(s):
+https://gitlab.com/procps-ng/procps/-/merge_requests/127
+. original ported cchange
+commit 6b8980a3b6279058d727377e914cfb6439d6f178
+
+Signed-off-by: Jim Warner <james.warner@comcast.net>
+
+---
+ top/top.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/top/top.c b/top/top.c
+index b3e1bcf..9248c7a 100644
+--- a/top/top.c
++++ b/top/top.c
+@@ -572,7 +572,7 @@ static void bye_bye (const char *str) {
+       exit(EXIT_FAILURE);
+    }
+    if (Batch) {
+-      write(fileno(stdout), "\n", sizeof("\n"));
++      write(fileno(stdout), "\n", sizeof("\n") - 1);
+    }
+    exit(EXIT_SUCCESS);
+ } // end: bye_bye
+-- 
+1.8.3.1
+
