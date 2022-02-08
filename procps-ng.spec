@@ -1,6 +1,6 @@
 Name: 		procps-ng
 Version: 	3.3.17
-Release:	1
+Release:	2
 Summary: 	Utilities that provide system information.
 License: 	GPL+ and GPLv2 and GPLv2+ and GPLv3+ and LGPLv2+
 URL: 		https://sourceforge.net/projects/procps-ng/
@@ -13,6 +13,7 @@ Patch1: 	0001-top-fix-two-potential-alternate-display-mode-abends.patch
 Patch2: 	0002-top-In-the-bye_bye-function-replace-fputs-with-the-w.patch
 Patch3: 	0003-add-options-M-and-N-for-top.patch
 Patch4: 	0004-top-exit-with-error-when-pid-overflow.patch
+Patch5:		0005-fix-a-fix-for-the-bye_bye-function.patch
 
 BuildRequires: 	ncurses-devel libtool autoconf automake gcc gettext-devel systemd-devel systemd-pam
 
@@ -92,6 +93,9 @@ ln -s %{_bindir}/pidof %{buildroot}%{_sbindir}/pidof
 %{_mandir}/man*
 
 %changelog
+* Sat Jan 29 2022 zhouwenpei <zhouwenpei1@h-partners.com> - 3.3.17-2
+- fix file type chamges caused by top -b redirection
+
 * Mon Dec 27 2021 zhouwenpei <zhouwenpei1@huawei.com> - 3.3.17-1
 - update to 3.3.17
 
