@@ -120,7 +120,7 @@ ln -s %{_bindir}/pidof %{buildroot}%{_sbindir}/pidof
 * Thu Nov 12 2020 xinghe <xinghe1@huawei.com> - 3.3.16-14
 - add help for Recommends
 
-* Thu Nov 03 2020 xinghe <xinghe1@huawei.com> - 3.3.16-13
+* Tue Nov 03 2020 xinghe <xinghe1@huawei.com> - 3.3.16-13
 - sync patchs
 
 * Wed Sep 23 2020 MarsChan <chenmingmin@huawei.com> - 3.3.16-12
@@ -185,5 +185,5 @@ ln -s %{_bindir}/pidof %{buildroot}%{_sbindir}/pidof
 - SUG:restart
 - DEC:add options -M and -N for top
 
-* Sat Jul 18 2018 openEuler Buildteam <buildteam@openeuler.org> - 3.3.15-4
+* Wed Jul 18 2018 openEuler Buildteam <buildteam@openeuler.org> - 3.3.15-4
 - Package init
