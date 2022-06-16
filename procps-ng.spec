@@ -108,7 +108,7 @@ ln -s %{_bindir}/pidof %{buildroot}%{_sbindir}/pidof
 * Sat Feb 27 2021 hewenliang <hewenliang4@huawei.com> - 3.3.16-14
 - sync patches
 
-* Thu Nov 03 2020 xinghe <xinghe1@huawei.com> - 3.3.16-13
+* Tue Nov 03 2020 xinghe <xinghe1@huawei.com> - 3.3.16-13
 - sync patchs
 
 * Wed Sep 23 2020 MarsChan <chenmingmin@huawei.com> - 3.3.16-12
