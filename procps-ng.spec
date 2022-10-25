@@ -1,6 +1,6 @@
 Name: 		procps-ng
 Version: 	3.3.17
-Release:	2
+Release:	3
 Summary: 	Utilities that provide system information.
 License: 	GPL+ and GPLv2 and GPLv2+ and GPLv3+ and LGPLv2+
 URL: 		https://sourceforge.net/projects/procps-ng/
@@ -93,6 +93,9 @@ ln -s %{_bindir}/pidof %{buildroot}%{_sbindir}/pidof
 %{_mandir}/man*
 
 %changelog
+* Tue Oct 25 2022 zhoujie <zhoujie133@h-partners.com> - 3.3.17-3
+- update the release to 3
+
 * Sat Jan 29 2022 zhouwenpei <zhouwenpei1@h-partners.com> - 3.3.17-2
 - fix file type chamges caused by top -b redirection
 
