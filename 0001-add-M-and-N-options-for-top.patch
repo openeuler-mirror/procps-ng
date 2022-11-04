@@ -1,0 +1,68 @@
+From 6e59f5e746c15df4d4b53f2df85b64aa1f10d0c3 Mon Sep 17 00:00:00 2001
+From: xuchunmei <xuchunmei@huawei.com>
+Date: Fri, 11 Jan 2019 01:29:55 -0500
+Subject: [PATCH] procps-ng: add -M and -N options for top
+
+Signed-off-by: xuchunmei <xuchunmei@huawei.com>
+Signed-off-by: zhoujie <zhoujie133@huawei.com>
+---
+ top/top.c     | 15 ++++++++++++++-
+ top/top_nls.c |  2 ++
+ 2 files changed, 16 insertions(+), 1 deletion(-)
+
+diff --git a/top/top.c b/top/top.c
+index 04cf084..fbf0236 100644
+--- a/top/top.c
++++ b/top/top.c
+@@ -4076,7 +4076,7 @@ default_or_error:
+          *       overridden -- we'll force some on and negate others in our
+          *       best effort to honor the loser's (oops, user's) wishes... */
+ static void parse_args (int argc, char **argv) {
+-    static const char sopts[] = "bcd:E:e:Hhin:Oo:p:SsU:u:Vw::1";
++    static const char sopts[] = "bcd:E:e:Hhin:Oo:p:SsU:u:Vw::1MN:";
+     static const struct option lopts[] = {
+        { "batch-mode",        no_argument,       NULL, 'b' },
+        { "cmdline-toggle",    no_argument,       NULL, 'c' },
+@@ -4097,6 +4097,8 @@ static void parse_args (int argc, char **argv) {
+        { "version",           no_argument,       NULL, 'V' },
+        { "width",             optional_argument, NULL, 'w' },
+        { "single-cpu-toggle", no_argument,       NULL, '1' },
++       { "sort-by-mem",       no_argument,       NULL, 'M' },
++       { "display-task-num",  required_argument, NULL, 'N' },
+        { NULL, 0, NULL, 0 }
+    };
+    float tmp_delay = FLT_MAX;
+@@ -4219,6 +4221,17 @@ static void parse_args (int argc, char **argv) {
+                error_exit(fmtmk(N_fmt(BAD_widtharg_fmt), cp));
+             Width_mode = (int)tmp;
+             continue;
++	 case 'M':
++         {
++            Curwin->rc.sortindx = EU_MEM;
++               break;
++         }
++         case 'N':
++         {
++            if (sscanf(cp, "%d", &Curwin->rc.maxtasks) != 1 || Curwin->rc.maxtasks < 0)
++               error_exit(fmtmk("bad iterations arg '%s'", cp));
++            continue;
++         }
+          default:
+             // we'll rely on getopt for any error message ...
+             bye_bye(NULL);
+diff --git a/top/top_nls.c b/top/top_nls.c
+index 92f12ba..2e9c7fd 100644
+--- a/top/top_nls.c
++++ b/top/top_nls.c
+@@ -409,6 +409,8 @@ static void build_norm_nlstab (void) {
+       " -u, --filter-only-euser =USER   show only processes owned by USER\n"
+       " -w, --width [=COLUMNS]          change print width [,use COLUMNS]\n"
+       " -1, --single-cpu-toggle         reverse last remembered '1' state\n"
++      " -M, --sort-by-mem               show tasks by memory usage\n"
++      " -N, --show-task-num		show the specified number of tasks\n"
+       "\n"
+       " -h, --help                      display this help text, then exit\n"
+       " -V, --version                   output version information & exit\n"
+-- 
+2.33.0
+
