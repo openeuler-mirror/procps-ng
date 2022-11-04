@@ -1,0 +1,26 @@
+From 68bd42fb10cfaf278e841d2925da7f061820abd4 Mon Sep 17 00:00:00 2001
+From: xuchunmei <xuchunmei@huawei.com>
+Date: Wed, 23 Jan 2019 07:57:53 -0500
+Subject: [PATCH] top: exit with error when pid overflow
+
+Signed-off-by: xuchunmei <xuchunmei@huawei.com>
+---
+ top/top.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/top/top.c b/top/top.c
+index fbf0236..4bcfff0 100644
+--- a/top/top.c
++++ b/top/top.c
+@@ -4189,7 +4189,8 @@ static void parse_args (int argc, char **argv) {
+                if (Monpidsidx >= MONPIDMAX)
+                   error_exit(fmtmk(N_fmt(LIMIT_exceed_fmt), MONPIDMAX));
+                if (1 != sscanf(cp, "%d", &pid)
+-               || strpbrk(cp, "+-."))
++               || strpbrk(cp, "+-.")
++               || 0 > pid)
+                   error_exit(fmtmk(N_fmt(BAD_mon_pids_fmt), cp));
+                if (!pid) pid = getpid();
+                for (i = 0; i < Monpidsidx; i++)
+--
+2.33.0

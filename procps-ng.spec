@@ -1,6 +1,6 @@
 Name: 		procps-ng
-Version: 	3.3.17
-Release:	3
+Version: 	4.0.0
+Release:	1
 Summary: 	Utilities that provide system information.
 License: 	GPL+ and GPLv2 and GPLv2+ and GPLv3+ and LGPLv2+
 URL: 		https://sourceforge.net/projects/procps-ng/
@@ -9,11 +9,8 @@ Source0: 	http://downloads.sourceforge.net/%{name}/%{name}-%{version}.tar.xz
 Source1: 	README.md
 Source2: 	README.top
 
-Patch1: 	0001-top-fix-two-potential-alternate-display-mode-abends.patch
-Patch2: 	0002-top-In-the-bye_bye-function-replace-fputs-with-the-w.patch
-Patch3: 	0003-add-options-M-and-N-for-top.patch
-Patch4: 	0004-top-exit-with-error-when-pid-overflow.patch
-Patch5:		0005-fix-a-fix-for-the-bye_bye-function.patch
+Patch1: 	0001-add-M-and-N-options-for-top.patch
+Patch2: 	0002-top-exit-with-error-when-pid-overflow.patch
 
 BuildRequires: 	ncurses-devel libtool autoconf automake gcc gettext-devel systemd-devel systemd-pam
 
@@ -45,7 +42,7 @@ The package is used for the Internationalization of %{name}
 %package_help
 
 %prep
-%autosetup -n procps-%{version} -p1
+%autosetup -n procps-ng-%{version} -p1
 
 cp -p %{SOURCE1} .
 cp -p %{SOURCE2} top/
@@ -71,10 +68,10 @@ ln -s %{_bindir}/pidof %{buildroot}%{_sbindir}/pidof
 %doc COPYING COPYING.LIB
 %{!?_licensedir:%global license %%doc}
 %license COPYING COPYING.LIB
-%{_libdir}/libprocps.so.*
+%{_libdir}/libproc-2.so.*
 %{_bindir}/*
 %{_sbindir}/*
-%exclude %{_libdir}/libprocps.la
+%exclude %{_libdir}/libproc-2.la
 %exclude /unwanted/*
 %exclude %{_libdir}/*.a
 
@@ -82,9 +79,9 @@ ln -s %{_bindir}/pidof %{buildroot}%{_sbindir}/pidof
 %doc COPYING COPYING.LIB
 %{!?_licensedir:%global license %%doc}
 %license COPYING COPYING.LIB
-%{_libdir}/libprocps.so
-%{_libdir}/pkgconfig/libprocps.pc
-%{_includedir}/proc
+%{_libdir}/libproc-2.so
+%{_libdir}/pkgconfig/libproc-2.pc
+%{_includedir}/procps
 
 %files i18n -f %{name}.lang
 
@@ -93,6 +90,9 @@ ln -s %{_bindir}/pidof %{buildroot}%{_sbindir}/pidof
 %{_mandir}/man*
 
 %changelog
+* Thu Nov 3 2022 zhoujie <zhoujie133@h-partners.com> - 4.0.0-1
+- update the release to 4.0.0-1
+
 * Tue Oct 25 2022 zhoujie <zhoujie133@h-partners.com> - 3.3.17-3
 - update the release to 3
 
