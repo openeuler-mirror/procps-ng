@@ -1,0 +1,202 @@
+From ad4429ade07abe2133dd53341fa91639625f09a0 Mon Sep 17 00:00:00 2001
+From: Jim Warner <james.warner@comcast.net>
+Date: Wed, 27 Jul 2022 00:00:00 -0500
+Subject: [PATCH] top: eliminate a potential abend when exiting 'A' mode <=== 
+ port of newlib 80e2a7a6
+
+______________________________ original newlib message
+----------------------------------- ( minus git hash )
+
+In that issue cited below, Tyson Nottingham identified
+a potential abend which was associated with 'alternate
+display mode' plus that troublesome 'mkVIZrow1' macro.
+He also offered a perfectly adequate fix for that bug.
+
+I refer to that macro as troublesome since it's now so
+widely used and sometimes (by design) causes 'begtask'
+to go negative (invalid). And now I found yet one more
+place where it should have been used but wasn't ('f').
+
+It's also troublesome as evidenced by some git history
+listed below. Heck, there was even a commit addressing
+the same symptoms (alternate display mode abend) which
+Tyson suffered. Clearly, the current design is flawed.
+
+So, with those two issues in mind, I've refactored the
+approach to maintaining a visible task in the 1st row.
+Henceforth, a 'mkVIZrow1' macro will be issued in only
+two places: once at startup and after most keystrokes.
+
+Such an approach likely results in additional calls to
+the 'window_hlp' routine that aren't really necessary.
+But, it provides a cleaner design less prone to errors
+in the future. Besides, such additional overhead would
+only be incurred when interacting with the user. Thus,
+new costs are of no concern and will never be noticed.
+
+Reference(s):
+. Tyson Nottingham reported problem
+https://gitlab.com/procps-ng/procps/-/issues/245
+. Jun, 2018 - visible row 1 tasks first addressed
+commit ........................................
+. Jun, 2018 - adressed edge case, new bugs created
+commit ........................................
+. Sep, 2018 - additional edge case addressed
+commit ........................................
+. May, 2021 - some abends fixed, new error created
+commit ........................................
+. Jun, 2021 - try to prorect against future errors
+commit ........................................
+. Sep, 2021 - integrate mkVIZ & 'focused' tasks
+commit ........................................
+
+Discovered by: Tyson Nottingham
+Signed-off-by: Jim Warner <james.warner@comcast.net>
+---
+ top/top.c | 42 ++++++++++++++++++------------------------
+ top/top.h |  2 ++
+ 2 files changed, 20 insertions(+), 24 deletions(-)
+
+diff --git a/top/top.c b/top/top.c
+index 9248c7a..780b3ce 100644
+--- a/top/top.c
++++ b/top/top.c
+@@ -4451,10 +4451,11 @@ static void win_names (WIN_t *q, const char *name) {
+ static void win_reset (WIN_t *q) {
+          SETw(q, Show_IDLEPS | Show_TASKON);
+ #ifndef SCROLLVAR_NO
+-         q->rc.maxtasks = q->usrseltyp = q->begpflg = q->begtask = q->begnext = q->varcolbeg = 0;
++         q->rc.maxtasks = q->usrseltyp = q->begpflg = q->begtask = q->varcolbeg = 0;
+ #else
+-         q->rc.maxtasks = q->usrseltyp = q->begpflg = q->begtask = q->begnext = 0;
++         q->rc.maxtasks = q->usrseltyp = q->begpflg = q->begtask = 0;
+ #endif
++	 mkVIZoff(q)
+          Monpidsidx = 0;
+          osel_clear(q);
+          q->findstr[0] = '\0';
+@@ -5163,7 +5164,6 @@ static void keys_global (int ch) {
+       case '?':
+       case 'h':
+          help_view();
+-         mkVIZrow1(Curwin);
+          break;
+       case 'B':
+          TOGw(w, View_NOBOLD);
+@@ -5191,7 +5191,6 @@ static void keys_global (int ch) {
+          break;
+       case 'g':
+          win_select(0);
+-         mkVIZrow1(Curwin);
+          break;
+       case 'H':
+          Thread_mode = !Thread_mode;
+@@ -5271,7 +5270,6 @@ static void keys_global (int ch) {
+          break;
+       case 'Z':
+          wins_colors();
+-         mkVIZrow1(Curwin);
+          break;
+       case '0':
+          Rc.zero_suppress = !Rc.zero_suppress;
+@@ -5473,10 +5471,7 @@ static void keys_task (int ch) {
+       case 'O':
+       case 'o':
+       case kbd_CtrlO:
+-         if (VIZCHKw(w)) {
+-            other_filters(ch);
+-            mkVIZrow1(w);
+-         }
++         if (VIZCHKw(w)) other_filters(ch);
+          break;
+       case 'U':
+       case 'u':
+@@ -5485,7 +5480,6 @@ static void keys_task (int ch) {
+             if (*str != kbd_ESC
+             && (errmsg = user_certify(w, str, ch)))
+                 show_msg(errmsg);
+-            mkVIZrow1(w);
+          }
+          break;
+       case 'V':
+@@ -5591,10 +5585,7 @@ static void keys_window (int ch) {
+          break;
+       case 'a':
+       case 'w':
+-         if (ALTCHKw) {
+-            win_select(ch);
+-            mkVIZrow1(Curwin);
+-         }
++         if (ALTCHKw) win_select(ch);
+          break;
+       case 'G':
+          if (ALTCHKw) {
+@@ -5691,10 +5682,8 @@ static void keys_window (int ch) {
+       case kbd_HOME:
+ #ifndef SCROLLVAR_NO
+          if (VIZCHKw(w)) if (CHKw(w, Show_IDLEPS)) w->begtask = w->begpflg = w->varcolbeg = 0;
+-         mkVIZrow1(w);
+ #else
+          if (VIZCHKw(w)) if (CHKw(w, Show_IDLEPS)) w->begtask = w->begpflg = 0;
+-         mkVIZrow1(w);
+ #endif
+          break;
+       case kbd_END:
+@@ -5928,6 +5917,13 @@ static void do_key (int ch) {
+             if (strchr(key_tab[i].keys, ch)) {
+                key_tab[i].func(ch);
+                Frames_signal = BREAK_kbd;
++	       /* due to the proliferation of the need for 'mkVIZrow1', |
++                  aside from 'wins_stage_2' use, we'll now issue it one |
++                  time here. there will remain several places where the |
++                  companion 'mkVIZrowX' macro is issued, thus the check |
++                  for a value already in 'begnext' in this conditional. | */
++               if (CHKw(Curwin, Show_TASKON) && !mkVIZyes)
++                  mkVIZrow1(Curwin)
+                goto all_done;
+             }
+    };
+@@ -6448,13 +6444,11 @@ static const char *task_show (const WIN_t *q, const int idx) {
+ 
+ 
+         /*
+-         * A window_show *Helper* function ensuring that Curwin's 'begtask'
+-         * represents a visible process (not any hidden/filtered-out task).
+-         * In reality, this function is called:
+-         *   1) exclusively for the 'current' window
+-         *   2) immediately after interacting with the user
+-         *   3) who struck: up, down, pgup, pgdn, home, end, 'o/O' or 'u/U'
+-         *   4) or upon the user switching from one window to another window */
++	 * A window_show *Helper* function ensuring that a window 'begtask' |
++         * represents a visible process (not any hidden/filtered-out task). |
++         * In reality this function is called exclusively for the 'current' |
++         * window and only after available user keystroke(s) are processed. |
++         * Note: it's entirely possible there are NO visible tasks to show! | */
+ static void window_hlp (void) {
+    WIN_t *w = Curwin;             // avoid gcc bloat with a local copy
+    int i, reversed;
+@@ -6498,7 +6492,7 @@ fwd_redux:
+    }
+ 
+ wrap_up:
+-   w->begnext = 0;
++   mkVIZoff(w)
+    OFFw(w, NOPRINT_xxx);
+ } // end: window_hlp
+ 
+diff --git a/top/top.h b/top/top.h
+index c4d4e85..df5220a 100644
+--- a/top/top.h
++++ b/top/top.h
+@@ -478,6 +478,8 @@ typedef struct WIN_t {
+         // Support for a proper (visible) row #1 whenever Curwin changes
+         // ( or a key which might affect vertical scrolling was struck )
+ #define mkVIZrow1(q) { q->begtask -= 1; q->begnext = +1; }
++#define mkVIZyes     ( Curwin->begnext != 0 )
++#define mkVIZoff(w)  { w->begnext = 0; }
+ 
+         /* Special Section: end ------------------------------------------ */
+         /* /////////////////////////////////////////////////////////////// */
+-- 
+2.33.0
+
