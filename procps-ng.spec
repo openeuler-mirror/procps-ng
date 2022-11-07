@@ -1,6 +1,6 @@
 Name: 		procps-ng
 Version: 	4.0.0
-Release:	1
+Release:	2
 Summary: 	Utilities that provide system information.
 License: 	GPL+ and GPLv2 and GPLv2+ and GPLv3+ and LGPLv2+
 URL: 		https://sourceforge.net/projects/procps-ng/
@@ -11,6 +11,7 @@ Source2: 	README.top
 
 Patch1: 	0001-add-M-and-N-options-for-top.patch
 Patch2: 	0002-top-exit-with-error-when-pid-overflow.patch
+Patch3:		0003-top-eliminate-a-potential-abend-when-exiting-A-mode.patch
 
 BuildRequires: 	ncurses-devel libtool autoconf automake gcc gettext-devel systemd-devel
 
@@ -90,6 +91,9 @@ ln -s %{_bindir}/pidof %{buildroot}%{_sbindir}/pidof
 %{_mandir}/man*
 
 %changelog
+* Mon Nov 7 2022 zhoujie <zhoujie133@h-partners.com> - 4.0.0-2
+- top eliminate a potential abend when exiting A mode
+
 * Fri Nov 4 2022 zhoujie <zhoujie133@h-partners.com> - 4.0.0-1
 - update the release to 4.0.0-1
 
