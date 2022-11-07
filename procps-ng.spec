@@ -1,6 +1,6 @@
 Name: 		procps-ng
 Version: 	3.3.17
-Release:	3
+Release:	4
 Summary: 	Utilities that provide system information.
 License: 	GPL+ and GPLv2 and GPLv2+ and GPLv3+ and LGPLv2+
 URL: 		https://sourceforge.net/projects/procps-ng/
@@ -14,6 +14,7 @@ Patch2: 	0002-top-In-the-bye_bye-function-replace-fputs-with-the-w.patch
 Patch3: 	0003-add-options-M-and-N-for-top.patch
 Patch4: 	0004-top-exit-with-error-when-pid-overflow.patch
 Patch5:		0005-fix-a-fix-for-the-bye_bye-function.patch
+Patch6:		0006-top-eliminate-a-potential-abend-when-exiting-A-mode.patch
 
 BuildRequires: 	ncurses-devel libtool autoconf automake gcc gettext-devel systemd-devel systemd-pam
 
@@ -93,6 +94,9 @@ ln -s %{_bindir}/pidof %{buildroot}%{_sbindir}/pidof
 %{_mandir}/man*
 
 %changelog
+* Mon Nov 7 2022 zhoujie <zhoujie133@h-partners.com> - 3.3.17-4
+- top eliminate a potential abend when exiting A mode
+
 * Wed Oct 19 2022 zhoujie <zhoujie133@huawei.com> - 3.3.17-3
 - update the release to 3
 
