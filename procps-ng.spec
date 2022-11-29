@@ -1,6 +1,6 @@
 Name: 		procps-ng
 Version: 	4.0.0
-Release:	2
+Release:	3
 Summary: 	Utilities that provide system information.
 License: 	GPL+ and GPLv2 and GPLv2+ and GPLv3+ and LGPLv2+
 URL: 		https://sourceforge.net/projects/procps-ng/
@@ -56,6 +56,9 @@ autoreconf -ivf
 
 make CFLAGS="%{optflags}"
 
+%check
+make check
+
 %install
 %make_install
 
@@ -91,10 +94,13 @@ ln -s %{_bindir}/pidof %{buildroot}%{_sbindir}/pidof
 %{_mandir}/man*
 
 %changelog
-* Mon Nov 7 2022 zhoujie <zhoujie133@h-partners.com> - 4.0.0-2
+* Tue Nov 29 2022 zhoujie <zhoujie133@huawei.com> - 4.0.0-3
+- enable make check
+
+* Mon Nov 7 2022 zhoujie <zhoujie133@huawei.com> - 4.0.0-2
 - top eliminate a potential abend when exiting A mode
 
-* Fri Nov 4 2022 zhoujie <zhoujie133@h-partners.com> - 4.0.0-1
+* Fri Nov 4 2022 zhoujie <zhoujie133@huawei.com> - 4.0.0-1
 - update the release to 4.0.0-1
 
 * Sat Jan 29 2022 zhouwenpei <zhouwenpei1@h-partners.com> - 3.3.17-2
