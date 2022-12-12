@@ -1,0 +1,72 @@
+From f7a33746f8484629df9055f9a2dc5654f377c2fe Mon Sep 17 00:00:00 2001
+From: Craig Small <csmall@dropbear.xyz>
+Date: Mon, 12 Dec 2022 16:46:36 +1100
+Subject: [PATCH] skill: Restore the -p flag functionality
+
+When the skill program was ported to the new API the code to filter
+on PID, used by the -p option, was missed. It is now restored.
+
+References:
+ https://bugs.debian.org/1025915
+
+Conflict:remove NES part and change src/skill.c to skill.c
+---
+ skill.c                        |  2 ++
+ testsuite/skill.test/skill.exp | 32 ++++++++++++++++++++++++++++++++
+ 2 files changed, 34 insertions(+)
+ create mode 100644 testsuite/skill.test/skill.exp
+
+diff --git a/skill.c b/skill.c
+index 9f617bfd..c2e52744 100644
+--- a/skill.c
++++ b/skill.c
+@@ -287,6 +287,8 @@ static void scan_procs(struct run_time_conf_t *run_time)
+     for (i=0; i < total_procs; i++) {
+         if (PIDS_GETINT(PID) == my_pid || PIDS_GETINT(PID) == 0)
+             continue;
++	if (pids && !match_intlist(PIDS_GETINT(PID), pid_count, pids))
++	    continue;
+         if (uids && !match_intlist(PIDS_GETUNT(EUID), uid_count, (int *)uids))
+             continue;
+         if (ttys && !match_intlist(PIDS_GETINT(TTY), tty_count, ttys))
+diff --git a/testsuite/skill.test/skill.exp b/testsuite/skill.test/skill.exp
+new file mode 100644
+index 00000000..162d9610
+--- /dev/null
++++ b/testsuite/skill.test/skill.exp
+@@ -0,0 +1,32 @@
++#
++# Dejagnu testsuite for skill - part of procps
++#
++set skill ${topdir}src/skill
++set tty [ get_tty ]
++
++if { ![ file exists $skill ] } {
++    untested { skipping (not built)}
++    return
++}
++
++set test "skill with no arguments"
++spawn $skill
++expect_pass "$test" "Usage:\\s+\(lt-\)?skill \\\[signal\\\] \\\[options\\\] <expression>"
++
++set test "skill list signal names"
++spawn $skill -l
++expect_pass "$test" "^\(\[A-Z12+-\]\\s*\)+$"
++
++set test "skill list signal names in table"
++spawn $skill -L
++expect_pass "$test" "^\(\\s+\\d+ \[A-Z12+-\]+\)+\\s*$"
++
++make_testproc
++
++# Debian 1025915
++set test "skill find one process"
++spawn $skill -n -p $testproc1_pid
++expect_pass "$test" "^$testproc1_pid\\s*$"
++
++# Cleanup
++kill_testproc
+-- 
+2.27.0
+
