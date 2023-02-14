@@ -1,6 +1,6 @@
 Name: 		procps-ng
-Version: 	4.0.0
-Release:	4
+Version: 	4.0.2
+Release:	1
 Summary: 	Utilities that provide system information.
 License: 	GPL+ and GPLv2 and GPLv2+ and GPLv3+ and LGPLv2+
 URL: 		https://sourceforge.net/projects/procps-ng/
@@ -9,10 +9,9 @@ Source0: 	http://downloads.sourceforge.net/%{name}/%{name}-%{version}.tar.xz
 Source1: 	README.md
 Source2: 	README.top
 
-Patch1: 	0001-add-M-and-N-options-for-top.patch
-Patch2: 	0002-top-exit-with-error-when-pid-overflow.patch
-Patch3:		0003-top-eliminate-a-potential-abend-when-exiting-A-mode.patch
-Patch4:		0004-skill-Restore-the-p-flag-functionality.patch
+Patch1: 	openeuler-add-M-and-N-options-for-top.patch
+Patch2: 	openeuler-top-exit-with-error-when-pid-overflow.patch
+Patch3:		skill-Restore-the-p-flag-functionality.patch
 
 BuildRequires: 	ncurses-devel libtool autoconf automake gcc gettext-devel systemd-devel systemd-pam
 
@@ -47,7 +46,7 @@ The package is used for the Internationalization of %{name}
 %autosetup -n procps-ng-%{version} -p1
 
 cp -p %{SOURCE1} .
-cp -p %{SOURCE2} top/
+cp -p %{SOURCE2} src/top/
 
 %build
 autoreconf -ivf
@@ -73,10 +72,10 @@ ln -s %{_bindir}/pidof %{buildroot}%{_sbindir}/pidof
 %doc COPYING COPYING.LIB
 %{!?_licensedir:%global license %%doc}
 %license COPYING COPYING.LIB
-%{_libdir}/libproc-2.so.*
+%{_libdir}/libproc2.so.*
 %{_bindir}/*
 %{_sbindir}/*
-%exclude %{_libdir}/libproc-2.la
+%exclude %{_libdir}/libproc2.la
 %exclude /unwanted/*
 %exclude %{_libdir}/*.a
 
@@ -84,17 +83,20 @@ ln -s %{_bindir}/pidof %{buildroot}%{_sbindir}/pidof
 %doc COPYING COPYING.LIB
 %{!?_licensedir:%global license %%doc}
 %license COPYING COPYING.LIB
-%{_libdir}/libproc-2.so
-%{_libdir}/pkgconfig/libproc-2.pc
-%{_includedir}/procps
+%{_libdir}/libproc2.so
+%{_libdir}/pkgconfig/libproc2.pc
+%{_includedir}/libproc2
 
 %files i18n -f %{name}.lang
 
 %files help
-%doc AUTHORS Documentation/bugs.md Documentation/FAQ NEWS README.md top/README.top Documentation/TODO
+%doc AUTHORS NEWS README.md
 %{_mandir}/man*
 
 %changelog
+* Wed Feb 1 2023 Qiang Wei <qiang.wei@suse.com> - 4.0.2-1
+- Update to 4.0.2.
+
 * Mon Dec 12 2022 Liu Chao <liuchao173@huawei.com> - 4.0.0-4
 - skill: Restore the -p flag functionality
  
