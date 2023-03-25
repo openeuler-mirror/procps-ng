@@ -1,0 +1,93 @@
+From bb7e161d5a06f1bbd5a98cf868eab356c6c1bac2 Mon Sep 17 00:00:00 2001
+From: Jim Warner <james.warner@comcast.net>
+Date: Thu, 16 Mar 2023 00:00:00 -0500
+Subject: [PATCH] top: address the missing 'guest' tics for summary area
+
+Well this is embarrassing. After repeatedly flogging a
+horse (represented by issue #274) I was certain it was
+dead. But, it turns out that the darn thing yet lived.
+
+In fact, the bug that was patched was not even the one
+the poster experienced. Now merge request #173 finally
+penetrated my foggy brain and explicated the real bug.
+
+Since forever (linux 2.6), top has ignored those guest
+and guest_nice fields in /proc/stat. When many virtual
+machines were running that overhead went unrecognized.
+
+So, this commit simply adds those tics to the 'system'
+figures so that it can be seen in text or graph modes.
+
+Reference(s):
+https://gitlab.com/procps-ng/procps/-/merge_requests/173
+
+https://gitlab.com/procps-ng/procps/-/issues/274
+. Mar 2023, avoid keystroke '%Cpu' distortions
+commit 7e33fc47c642aceea8ad53e86a6797239b91f5f9
+
+Signed-off-by: Jim Warner <james.warner@comcast.net>
+---
+ man/top.1     | 7 +++++--
+ src/top/top.c | 7 +++++++
+ 2 files changed, 12 insertions(+), 2 deletions(-)
+
+diff --git a/man/top.1 b/man/top.1
+index 5a77beb1..8bf804aa 100644
+--- a/man/top.1
++++ b/man/top.1
+@@ -527,6 +527,9 @@ Depending on your kernel version, the \fBst\fR field may not be shown.
+     \fBst\fR : time stolen from this vm by the hypervisor
+ .fi
+ 
++The `sy' value above also reflects the time running a virtual \*(Pu
++for guest operating systems, including those that have been niced.
++
+ Beyond the first tasks/threads line, there are alternate \*(PU display
+ modes available via the 4-way `t' \*(CT.
+ They show an abbreviated summary consisting of these elements:
+@@ -537,8 +540,8 @@ They show an abbreviated summary consisting of these elements:
+ .fi
+ 
+ Where: a) is the `user' (us + ni) percentage; b) is the `system'
+-(sy + hi + si) percentage; c) is the total percentage; and d) is
+-one of two visual graphs of those representations.
++(sy + hi + si + guests) percentage; c) is the total percentage;
++and d) is one of two visual graphs of those representations.
+ Such graphs also reflect separate `user' and `system' portions.
+ 
+ If the `4' \*(CT is used to yield more than two cpus per line,
+diff --git a/src/top/top.c b/src/top/top.c
+index 26a9adb5..02ef8f6d 100644
+--- a/src/top/top.c
++++ b/src/top/top.c
+@@ -286,6 +286,7 @@ static enum stat_item Stat_items[] = {
+    STAT_TIC_DELTA_NICE,     STAT_TIC_DELTA_IDLE,
+    STAT_TIC_DELTA_IOWAIT,   STAT_TIC_DELTA_IRQ,
+    STAT_TIC_DELTA_SOFTIRQ,  STAT_TIC_DELTA_STOLEN,
++   STAT_TIC_DELTA_GUEST,    STAT_TIC_DELTA_GUEST_NICE,
+    STAT_TIC_SUM_DELTA_USER, STAT_TIC_SUM_DELTA_SYSTEM,
+ #ifdef CORE_TYPE_NO
+    STAT_TIC_SUM_DELTA_TOTAL };
+@@ -298,6 +299,7 @@ enum Rel_statitems {
+    stat_NI, stat_IL,
+    stat_IO, stat_IR,
+    stat_SI, stat_ST,
++   stat_GU, stat_GN,
+    stat_SUM_USR, stat_SUM_SYS,
+ #ifdef CORE_TYPE_NO
+    stat_SUM_TOT };
+@@ -6340,6 +6342,11 @@ static int sum_tics (struct stat_stack *this, const char *pfx, int nobuf) {
+    if (1 > tot_frme) idl_frme = tot_frme = 1;
+    scale = 100.0 / (float)tot_frme;
+ 
++   /* account for VM tics not otherwise provided for ...
++      ( with xtra-procps-debug.h, can't use PID_VAL w/ assignment ) */
++   this->head[stat_SY].result.sl_int += rSv(stat_GU) + rSv(stat_GN);
++   this->head[stat_SUM_SYS].result.sl_int += rSv(stat_GU) + rSv(stat_GN);
++
+    /* display some kinda' cpu state percentages
+       (who or what is explained by the passed prefix) */
+    if (Curwin->rc.graph_cpus) {
+-- 
+2.27.0
+
