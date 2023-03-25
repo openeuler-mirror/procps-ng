@@ -1,6 +1,6 @@
 Name: 		procps-ng
 Version: 	4.0.2
-Release:	1
+Release:	2
 Summary: 	Utilities that provide system information.
 License: 	GPL+ and GPLv2 and GPLv2+ and GPLv3+ and LGPLv2+
 URL: 		https://sourceforge.net/projects/procps-ng/
@@ -12,6 +12,7 @@ Source2: 	README.top
 Patch1: 	openeuler-add-M-and-N-options-for-top.patch
 Patch2: 	openeuler-top-exit-with-error-when-pid-overflow.patch
 Patch3:		skill-Restore-the-p-flag-functionality.patch
+Patch4:		backport-top-address-the-missing-guest-tics-for-summary-area.patch
 
 BuildRequires: 	ncurses-devel libtool autoconf automake gcc gettext-devel systemd-devel
 
@@ -94,6 +95,9 @@ ln -s %{_bindir}/pidof %{buildroot}%{_sbindir}/pidof
 %{_mandir}/man*
 
 %changelog
+* Sat Mar 25 2023 zhoujie <zhoujie133@huawei.com> - 4.0.2-2
+- top: top address the missing guest tics for summary area
+
 * Wed Feb 1 2023 Qiang Wei <qiang.wei@suse.com> - 4.0.2-1
 - Update to 4.0.2.
 
