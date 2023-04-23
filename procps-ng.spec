@@ -1,6 +1,6 @@
 Name: 		procps-ng
 Version: 	3.3.16
-Release:	17
+Release:	18
 Summary: 	Utilities that provide system information.
 License: 	GPL+ and GPLv2 and GPLv2+ and GPLv3+ and LGPLv2+
 URL: 		https://sourceforge.net/projects/procps-ng/
@@ -70,6 +70,9 @@ autoreconf -ivf
 
 make CFLAGS="%{optflags}"
 
+%check
+make check
+
 %install
 %make_install
 
@@ -108,6 +111,9 @@ ln -s %{_bindir}/pidof %{buildroot}%{_sbindir}/pidof
 %{_mandir}/translated
 
 %changelog
+* Fri Apr 21 2023 zhoujie <zhoujie133@huawei.com> - 3.3.16-18
+- enable make check
+
 * Sat Feb 27 2021 hewenliang <314264452@qq.com> - 3.3.16-17
 - Sync patches from upstream
 
